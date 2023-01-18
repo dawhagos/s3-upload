@@ -6,7 +6,7 @@ async function postFileController(req, res) {
 
   const upload = new Upload();
   upload.filename = file.originalname;
-  const createdFile = await Upload.save();
+  const createdFile = await upload.save();
 
   await s3
     .putObject({

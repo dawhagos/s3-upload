@@ -11,9 +11,9 @@ const cookieSession = require("cookie-session");
 const mongoose = require("mongoose");
 const passport = require("passport");
 
-const getFilesController = require("./controllers/");
-const getFileController = require("./controllers/");
-const postFileController = require("./controllers/");
+const getFilesController = require("./controllers/getFilesController");
+const getFileController = require("./controllers/getFileController");
+const postFileController = require("./controllers/postFileController");
 const isAuthenticated = require("./middleware/isAuthenticated");
 
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
@@ -24,12 +24,12 @@ const MONGO_URL = process.env.MONGO_URL;
 passport.use(
   new GoogleStrategy(
     {
-      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:5000/auth/google/callback",
       passReqToCallback: true,
     },
-    function (profile, done) {
+    function (request, accessToken, refreshToken, profile, done) {
       return done(null, profile);
     }
   )
@@ -53,7 +53,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(cookieParser);
+app.use(cookieParser());
+
 app.use(
   cookieSession({
     name: "session",
@@ -73,16 +74,22 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:5173",
+    successRedirect: "http://localhost:5173/",
     failureRedirect: "http://localhost:5173/error",
   })
 );
 
+app.get("/error", (req, res) => {
+  res.send("something went wrong..");
+});
+
 app.post("/files", isAuthenticated, upload.single("file"), postFileController);
 
-app.get("files", isAuthenticated, getFilesController);
+app.get("/files", isAuthenticated, getFilesController);
 
 app.get("/files/:filename", isAuthenticated, getFileController);
+
+mongoose.set("strictQuery", false);
 
 mongoose.connect(MONGO_URL).then(() => {
   console.log(`listening on port ${PORT}`);
