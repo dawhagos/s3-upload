@@ -5,6 +5,21 @@
   text-align: center;
 }
 
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.files a {
+  display: flex;
+  justify-content: center;
+}
+
+.delete {
+  color: #d11a2a;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

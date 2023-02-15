@@ -14,6 +14,7 @@ const passport = require("passport");
 const getFilesController = require("./controllers/getFilesController");
 const getFileController = require("./controllers/getFileController");
 const postFileController = require("./controllers/postFileController");
+const deleteFileController = require("./controllers/deleteFileController");
 const isAuthenticated = require("./middleware/isAuthenticated");
 
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
@@ -84,6 +85,8 @@ app.get("/error", (req, res) => {
 });
 
 app.post("/files", isAuthenticated, upload.single("file"), postFileController);
+
+app.delete("/files/:filename", isAuthenticated, deleteFileController);
 
 app.get("/files", isAuthenticated, getFilesController);
 

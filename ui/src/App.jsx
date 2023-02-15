@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { uploadFile } from "./api/uploadFile";
 import { API_URL } from "./api/config";
 import { getFiles } from "./api/getFiles";
+import { deleteFile } from "./api/deleteFile";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,6 +13,12 @@ function App() {
   
   function handleFileSelect(e) {
     setFile(e.target.files[0]);
+  }
+
+  async function handleFileDeletion(filename) {
+    await deleteFile(filename);
+    const updatedUploads = uploads.filter(upload => upload !== filename)
+    setUploads(updatedUploads);
   }
 
   async function handleSubmit(e) {
@@ -25,7 +32,7 @@ function App() {
       setUploads(files);
       setIsAuthenticated(true);
     });
-  }, []);
+  }, [uploads]);
 
 
   return (
@@ -39,14 +46,18 @@ function App() {
             <input onChange={handleFileSelect} id="file" type="file"></input>
             <button>upload</button>
           </form>
-
+          <div className="files">
           {uploads.map((upload) => (
             <div key={upload._id}>
               <a href={`${API_URL}/files/${upload.filename}`}>
                 {upload.filename}
               </a>
+              <button className="delete" onClick={() => handleFileDeletion(upload.filename)}>
+                delete
+              </button>
             </div>
           ))}
+          </div>
         </>
       )}
     </div>

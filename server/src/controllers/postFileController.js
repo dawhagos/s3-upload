@@ -6,7 +6,12 @@ async function postFileController(req, res) {
 
   const upload = new Upload();
   upload.filename = file.originalname;
-  const createdFile = await upload.save();
+  try {
+    const createdFile = await upload.save();
+    res.json(createdFile);
+  } catch (err) {
+    console.log(err);
+  }
 
   await s3
     .putObject({
@@ -15,7 +20,5 @@ async function postFileController(req, res) {
       Body: file.buffer,
     })
     .promise();
-
-  res.json(createdFile);
 }
 module.exports = postFileController;
