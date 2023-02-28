@@ -41,6 +41,9 @@ function App() {
         <a href={`${API_URL}/auth/google`}>login</a>
       ) : (
         <>
+        <div className="title">
+        <h1>filebox</h1>
+        </div>
           <form onSubmit={handleSubmit}>
             <label htmlFor="file">File</label>
             <input onChange={handleFileSelect} id="file" type="file"></input>
